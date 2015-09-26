@@ -1,4 +1,4 @@
-import socket, time, serialNumber, subprocess, queue, humiture
+import socket, time, serialNumber, queue, humiture
 
 server = ('104.208.29.115', 27007)
 
