@@ -14,7 +14,7 @@ humitureCmd = ['sudo','humiture','11','18']
 while True: 
 	q.put(humiture.getHumiture()) # [temperature, humidity, timeCaptured]
 	while not q.empty():
-                
+		
 		msg = q.get()
 		message = (serial + ";" + msg[0] +  ";" + msg[1] + ";" + msg[2])
 		print("Attempting to send to server: " + message)
@@ -28,10 +28,21 @@ while True:
 				break
 				
 		except Exception as e:
-			print("Failed to send message. Error: " + str(e))
+			print("Failed to send message. Error: " + str(e)
+			      + "\nAttempting to reestablish connection.")
 			q.put(msg)
-			clientsocket.close()
-			clientsocket.connect(server)
+			try:
+				clientsocket.close()
+				print("Socket Released.")
+			except Exception as e:
+				print("Failed to release socket: " + str(e))
+			finally:
+				try:
+					clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+					clientsocket.connect(server)
+					print("Connection reestablished.")
+				except Exception as e2:
+					print("Failed to reestablish connection: " + str(e2))
 			break
 		
 	time.sleep(60)
