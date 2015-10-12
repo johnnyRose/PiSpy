@@ -14,7 +14,7 @@ q = queue.Queue()
 while True: 
 	q.put([str(random.randrange(18.0, 25.0)), str(random.randrange(0.0, 100.0)), str(round(time.time()))]) # [temperature, humidity, timeCaptured]
 	while not q.empty():
-                
+		
 		msg = q.get()
 		message = (serial + ";" + msg[0] +  ";" + msg[1] + ";" + msg[2])
 		print("Attempting to send to server: " + message)
@@ -30,8 +30,18 @@ while True:
 		except Exception as e:
 			print("Failed to send message. Error: " + str(e))
 			q.put(msg)
-			clientsocket.close()
-			clientsocket.connect(server)
+			try:
+				clientsocket.close()
+				print("Socket Released.")
+			except Exception as e:
+				print("Failed to release socket: " + str(e))
+			finally:
+				try:
+					clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+					clientsocket.connect(server)
+					print("Connection reestablished.")
+				except Exception as e2:
+					print("Failed to reestablish connection: " + str(e2))
 			break
 		
 	time.sleep(60)
