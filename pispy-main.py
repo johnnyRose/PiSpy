@@ -1,4 +1,4 @@
-import socket, time, serialNumber, queue, humiture, urllib.request
+import socket, time, serialNumber, queue, humiture
 
 server = ('104.208.29.115', 27007)
 
@@ -12,9 +12,6 @@ q = queue.Queue()
 humitureCmd = ['sudo','humiture','11','18']
 
 while True:
-	# prevent website/policy engine from falling asleep
-	urllib.request.urlopen("http://pispy.cloudapp.net").read()
-
 	q.put(humiture.getHumiture()) # [temperature, humidity, timeCaptured]
 	while not q.empty():
 		
