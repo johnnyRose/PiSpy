@@ -1,0 +1,48 @@
+﻿@model WebRole1.Models.MySpiesViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@Html.ActionLink("Add a PiSpy", "Add", null, new { @class = "btn btn-success" })
+
+<br /><br />
+
+<table class="table table-hover table-responsive table-striped">
+
+    <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Notes</th>
+        <th></th>
+        <th></th>
+    </tr>
+
+    @foreach (var spy in Model.PiSpyDevices)
+    {
+        <tr title="Serial Number: @spy.SerialNumber">
+            <td>@spy.Name</td>
+            <td>@spy.Location</td>
+            <td>@spy.Notes</td>
+            <td>
+                <div class="dropdown">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>@Html.ActionLink("Climate Data", "Climate", "Data", new { id = spy.Id }, null)</li>
+                        <li>@Html.ActionLink("Live Feed", "Stream", "Streaming", new { id = spy.Id }, null)</li>
+                        <li class="divider"></li>
+                        <li>@Html.ActionLink("Manage Policies", "Index", "Policies", new { id = spy.Id }, null)</li>
+                        <li class="divider"></li>
+                        <li>@Html.ActionLink("Edit", "Edit", new { id = spy.Id })</li>
+                        <li>@Html.ActionLink("Delete", "Delete", new { @id = spy.Id }, new { @style = "background-color:#ff4444;" })</li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    }
+
+</table>
+
+

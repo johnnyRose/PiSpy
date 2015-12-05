@@ -1,0 +1,48 @@
+﻿@model WebRole1.Models.StreamViewModel
+
+@{
+    ViewBag.Title = "Stream";
+}
+
+
+
+
+<h2>Stream</h2>
+
+
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <span id="videoSpan">
+            <video src="@Model.SourceOfLastVideo" id="video"></video>
+        </span>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            var video = document.getElementById("video");
+            var piSpyId = "@Model.PiSpyDevice.Id";
+            video.play();
+
+
+            setInterval(function () {
+
+                $.getJSON("/Streaming/GetLatest/" + piSpyId, function (data) {
+                    console.log(data);
+                    video.src = data;
+                    video.play();
+                });
+            }, 5000);
+        });
+
+    </script>    
+    
+}

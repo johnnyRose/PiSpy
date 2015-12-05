@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="IIS Web Application Name" description="" value="WebRole1_IN_0_Web" tags="PhysicalPath">
+    <parameterEntry kind="ProviderPath" scope="contentPath" match="^C:\\Users\\John\ Rosewicz\\Source\\Workspaces\\John\ Rosewicz\\PiSpy\.Server\\WebRole1\\obj\\Release\\Package\\PackageTmp$" />
+    <parameterEntry kind="ProviderPath" scope="setAcl" match="^C:\\Users\\John\ Rosewicz\\Source\\Workspaces\\John\ Rosewicz\\PiSpy\.Server\\WebRole1\\obj\\Release\\Package\\PackageTmp$" />
+  </parameter>
+  <parameter name="DefaultConnection-Web.config Connection String" description="" value="Server=tcp:yfswwuwu7f.database.windows.net,1433;Database=pispydb;User ID=pispy@yfswwuwu7f;Password=temp@123;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;" tags="">
+    <parameterEntry kind="XmlFile" scope="C:\\Users\\John\ Rosewicz\\Source\\Workspaces\\John\ Rosewicz\\PiSpy\.Server\\WebRole1\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='DefaultConnection']/@connectionString" />
+  </parameter>
+</parameters>

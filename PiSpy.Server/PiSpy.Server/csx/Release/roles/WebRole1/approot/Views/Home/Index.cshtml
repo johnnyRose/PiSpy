@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<h1>PiSpy Cloud</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <ol>
+            @if (Request.IsAuthenticated)
+            {
+                <strike><li>Log in or Register</li></strike>
+            }
+            else
+            {
+                <li>@Html.ActionLink("Log in", "Login", "Account") or @Html.ActionLink("Register", "Register", "Account")</li>
+            }
+
+            @if (Request.IsAuthenticated)
+            {
+                <li>@Html.ActionLink("Register your PiSpy devices", "Index", "MySpies")</li>
+            }
+            else
+            {
+                <li>Register your PiSpy devices</li>
+            }
+            <li>Set up your PiSpy to transmit to the IP and port discussed with the proper syntax</li>
+            <li>View data from your PiSpy</li>
+            <li>???</li>
+            <li>Profit</li>
+        </ol>
+    </div>
+</div>

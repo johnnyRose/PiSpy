@@ -1,0 +1,191 @@
+﻿@model WebRole1.Models.PolicyViewModel
+
+@{
+    ViewBag.Title = "Manage Policies";
+}
+
+<h2>Manage Policies</h2>
+
+@Html.ActionLink("Back", "Index", "MySpies", null, null)
+
+<hr />
+
+<div class="row">
+    <div class="col-md-12">
+        <h4>Choose a policy type to add.</h4>
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default" id="ClimateButton" onclick="ShowGroup('add-climate-policy')">Climate</button>
+            <button type="button" class="btn btn-default" id="ReminderButton" onclick="ShowGroup('add-reminder-policy')">Reminder</button>
+            <button type="button" class="btn btn-default" id="DisconnectButton" onclick="ShowGroup('add-disconnect-policy')">Disconnect</button>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="hidden add-policy" id="add-climate-policy">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.PiSpyDevice.Id)
+
+            <div class="col-md-6">
+                <h4>Add a climate policy.</h4>
+                <div class="form-inline">
+                    <div class="form-group">
+                        @Html.Label("If")
+                        @Html.DropDownListFor(m => m.NumericPolicy.NumericPolicyTypeId, Model.NumericPolicyTypeToSelect(), new { @class = "form-control" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label("is")
+                        @Html.DropDownListFor(m => m.NumericPolicy.ComparisonOperatorId, Model.ComparisonOperatorToSelect(), new { @class = "form-control" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.EditorFor(m => m.NumericPolicy.Value, new { htmlAttributes = new { @class = "form-control", @placeholder = "72" } })
+                    </div>
+
+                    <input type="submit" value="Add" class="btn btn-primary" style="display:inline;" />
+
+                </div>
+            </div>
+        }
+    </div>
+    
+    <div class="hidden add-policy" id="add-reminder-policy">
+        @using (Html.BeginForm("AddReminder", "Policies", new { id = Model.PiSpyDevice.Id }, FormMethod.Post, null))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.PiSpyDevice.Id)
+
+            <div class="col-md-6">
+                <h4>Add a reminder.</h4>
+                <div class="form-inline">
+                    <div class="form-group">
+                        @Html.Label("At")
+                        @Html.EditorFor(m => m.ReminderPolicy.TriggerTime, new { htmlAttributes = new { @class = "form-control", @placeholder = DateTime.Now.AddHours(-5) } })
+                    </div>
+
+                    <input type="submit" value="Continue" class="btn btn-primary" style="display:inline;" />
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="hidden add-policy" id="add-disconnect-policy">
+        @using (Html.BeginForm("AddDisconnect", "Policies", new { id = Model.PiSpyDevice.Id }, FormMethod.Post, null))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.PiSpyDevice.Id)
+
+            <div class="col-md-6">
+                <h4>Add a disconnect policy.</h4>
+                <div class="form-inline">
+                    <div class="form-group">
+                        @Html.Label("If the PiSpy hasn't connected in")
+                        @Html.EditorFor(m => m.DisconnectPolicy.MinutesDisconnected, new { htmlAttributes = new { @class = "form-control", @placeholder = "5" } })
+                        @Html.Label("minutes,")
+                    </div>
+
+                    <input type="submit" value="Continue" class="btn btn-primary" style="display:inline;" />
+                </div>
+            </div>
+        }
+    </div>
+
+    <h4>Add a logical group.</h4>
+    <div class="col-md-3 col-sm-3">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default create-group" id="AND">AND</button>
+            <button type="button" class="btn btn-default create-group" id="OR">OR</button>
+            <button type="button" class="btn btn-default create-group" id="XOR">XOR</button>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-4">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default create-group" id="NAND">NAND</button>
+            <button type="button" class="btn btn-default create-group" id="NOR">NOR</button>
+            <button type="button" class="btn btn-default create-group" id="XNOR">XNOR</button>
+        </div>
+    </div>
+
+    @using (Html.BeginForm("CreateGroup", "Policies", new { id = Model.PiSpyDevice.Id }, FormMethod.Post, new { id = "CreateGroupForm" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("name", "", new { id = "hiddenName" });
+    }
+
+</div>
+
+<hr />
+
+@foreach (var policy in Model.PiSpyDevice.Policies)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>@policy.Name()</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="col-md-8">
+                        @{ string display = policy.Display(); }
+                        
+                        <p>If @(display == "()" ? "(No policies have been added to this policy group!)" : display), then</p>
+                        @if (policy.PolicyActionId != null)
+                        {
+                            <p>@policy.PolicyAction.ToString()</p>
+                        }
+                        else
+                        {
+                            <p>(No action added to this policy yet. @Html.ActionLink("Add an Action", "AddAction", new { id = policy.Id }).)</p>
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        @if (policy.GetType().Name.Contains("PolicyGroup"))
+                        {
+                            using (Html.BeginForm("AddToGroup", "Policies", new { groupId = policy.Id }, FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.DropDownList("policyId", Model.PolicyToSelect(policy.Id), new { @class = "form-control" })
+                                <input type="submit" value="Add to group" class="btn btn-primary" />
+                            }
+                        }
+                       
+                        @using (Html.BeginForm("DeletePolicy", "Policies", new { id = policy.Id }, FormMethod.Post, new { @class = "DeleteForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="submit" value="Delete" class="btn btn-danger" />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        $('.DeleteForm').submit(function () {
+            return confirm("Are you sure you want to delete this policy? This action cannot be undone.");
+        });
+
+        $('.create-group').click(function () {
+            $('#hiddenName').val(this.innerHTML);
+            $('#CreateGroupForm').submit();
+        });
+
+        function ShowGroup(groupId) {
+            $('.add-policy').addClass('hidden');
+            $('#' + groupId).removeClass('hidden');
+        }
+
+    </script>
+}
