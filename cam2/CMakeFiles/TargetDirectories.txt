@@ -1,1 +1,0 @@
-/home/austin/cam2/CMakeFiles/picamdemo.dir
