@@ -1,7 +1,6 @@
 import socket, time, serialNumber, queue, humiture
 
-server = ('104.208.29.115', 27007)
-#server = ('104.208.39.124', 27007)
+server = ('104.208.29.179', 27007) # pispy.cloudapp.net
 
 clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 clientsocket.connect(server)
